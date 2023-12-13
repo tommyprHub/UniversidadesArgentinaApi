@@ -10,9 +10,7 @@ class UniAdapter(private val message:List<Universidad>):RecyclerView.Adapter<Uni
         val view = layoutInflater.inflate(R.layout.item_uni, parent, false)
         return UniViewHolder(view)
     }
-
     override fun getItemCount(): Int = message.size
-
     override fun onBindViewHolder(holder: UniViewHolder, position: Int) {
         val item = message[position]
         holder.bind(item)

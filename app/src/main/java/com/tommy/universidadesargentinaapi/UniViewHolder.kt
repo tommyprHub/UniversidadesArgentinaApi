@@ -10,7 +10,7 @@ class UniViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     @SuppressLint("SetTextI18n")
     fun bind(universidad: Universidad) {
-        val pagWebText = if (universidad.webPages.isNullOrEmpty()) "N/A" else formatList(universidad.webPages)
+
         val dominioText = if (universidad.domains.isNullOrEmpty()) "N/A" else formatList(universidad.domains)
 
         binding.txUni.text = "Nombre: ${universidad.name}\n" +

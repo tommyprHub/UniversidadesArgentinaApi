@@ -1,8 +1,11 @@
 package com.tommy.universidadesargentinaapi
 
+
+import android.graphics.drawable.GradientDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.tommy.universidadesargentinaapi.databinding.ActivityMainBinding
@@ -22,6 +25,7 @@ class MainActivity : AppCompatActivity(), androidx.appcompat.widget.SearchView.O
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setGradientBackground()
         binding.svUni.setOnQueryTextListener(this)
         initRecyclerView()
     }
@@ -32,48 +36,66 @@ class MainActivity : AppCompatActivity(), androidx.appcompat.widget.SearchView.O
         binding.rvUni.adapter = adapter
     }
 
-    private fun getRetrofit(): Retrofit {
+    private fun getRetrofit():Retrofit{
         return Retrofit.Builder()
             .baseUrl("http://universities.hipolabs.com/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
+    private fun setGradientBackground() {
+        // Obtén la referencia al layout principal (root)
+        val rootView: View = binding.root
+
+        // Crea un drawable degradado
+        val gradientDrawable = GradientDrawable(
+            GradientDrawable.Orientation.TOP_BOTTOM,
+            intArrayOf(
+                resources.getColor(R.color.gradientStart), // Color de inicio
+                resources.getColor(R.color.gradientEnd)    // Color de fin
+            )
+        )
+
+        // Establece el drawable degradado como fondo del layout principal
+        rootView.background = gradientDrawable
+    }
 
     private fun searchByName(query: String) {
-        Log.d("UniSearch", "Iniciando búsqueda para: $query")
         CoroutineScope(Dispatchers.IO).launch {
-            try {
+
+            try{
                 val response = getRetrofit().create(APIService::class.java).getUniByName("Argentina", query).execute()
 
-                runOnUiThread {
+                runOnUiThread{
                     if (response.isSuccessful) {
                         val universities = response.body()
                         universities?.let {
                             infoUni.clear()
                             infoUni.addAll(it)
                             adapter.notifyDataSetChanged()
-                            Log.d("UniSearch", "Número de universidades encontradas: ${infoUni.size}")
                         }
+                        hideKeyboard()
                     } else {
                         showError()
                     }
                 }
-            } catch (e: Exception) {
+
+            }catch (e: Exception){
                 runOnUiThread {
                     showError()
                 }
             }
         }
-        Log.d("UniSearch", "Búsqueda completada para: $query")
     }
-
+    private fun hideKeyboard() {
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(binding.viewRoot.windowToken, 0)
+    }
     private fun showError() {
-        Toast.makeText(this, "No existe esa universidad", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "No se ha encontrado la universidad", Toast.LENGTH_SHORT).show()
     }
-
     override fun onQueryTextSubmit(query: String?): Boolean {
         if (!query.isNullOrEmpty()) {
-            searchByName(query)
+            searchByName(query.toLowerCase())
         }
         return true
     }

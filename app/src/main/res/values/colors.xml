@@ -2,4 +2,7 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="azul">#20B2AA</color>
+    <color name="gradientStart">#858585</color>
+    <color name="gradientEnd">#FF000000</color>
 </resources>
