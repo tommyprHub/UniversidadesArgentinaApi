@@ -48,19 +48,15 @@ class MainActivity : AppCompatActivity(), androidx.appcompat.widget.SearchView.O
             .build()
     }
     private fun setGradientBackground() {
-        // Obtén la referencia al layout principal (root)
         val rootView: View = binding.root
 
-        // Crea un drawable degradado
         val gradientDrawable = GradientDrawable(
             GradientDrawable.Orientation.TOP_BOTTOM,
             intArrayOf(
-                resources.getColor(R.color.gradientStart), // Color de inicio
-                resources.getColor(R.color.gradientEnd)    // Color de fin
+                resources.getColor(R.color.gradientStart),
+                resources.getColor(R.color.gradientEnd)
             )
         )
-
-        // Establece el drawable degradado como fondo del layout principal
         rootView.background = gradientDrawable
     }
 

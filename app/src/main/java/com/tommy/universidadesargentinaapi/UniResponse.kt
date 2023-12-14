@@ -1,5 +1,6 @@
 package com.tommy.universidadesargentinaapi
 
+import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
 
@@ -8,8 +9,8 @@ data class UniResponse(var message: List<Universidad>)
 data class Universidad(
     var name: String,
     var country: String,
-    var stateProvince: String?,
-    var alphaCode: String,
-    var webPages: List<String>,
+    @SerializedName("state-province") var stateProvince: String?,
+    @SerializedName("alpha_two_codevar") var alphaCode: String,
+    @SerializedName("web_pages")var webPages: List<String>,
     var domains: List<String>
 ): Serializable
