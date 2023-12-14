@@ -1,6 +1,7 @@
 package com.tommy.universidadesargentinaapi
 
 
+import android.content.Intent
 import android.graphics.drawable.GradientDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -19,7 +20,7 @@ class MainActivity : AppCompatActivity(), androidx.appcompat.widget.SearchView.O
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var adapter: UniAdapter
-    private var infoUni = mutableListOf<Universidad>()
+    private var infoUniversidades = mutableListOf<Universidad>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,7 +32,11 @@ class MainActivity : AppCompatActivity(), androidx.appcompat.widget.SearchView.O
     }
 
     private fun initRecyclerView() {
-        adapter = UniAdapter(infoUni)
+        adapter = UniAdapter(infoUniversidades){ Universidad ->
+            val intent = Intent(this@MainActivity, DatosUniversidad::class.java)
+            intent.putExtra("image_url", Universidad)
+            startActivity(intent)
+        }
         binding.rvUni.layoutManager = LinearLayoutManager(this)
         binding.rvUni.adapter = adapter
     }
@@ -69,8 +74,8 @@ class MainActivity : AppCompatActivity(), androidx.appcompat.widget.SearchView.O
                     if (response.isSuccessful) {
                         val universities = response.body()
                         universities?.let {
-                            infoUni.clear()
-                            infoUni.addAll(it)
+                            infoUniversidades.clear()
+                            infoUniversidades.addAll(it)
                             adapter.notifyDataSetChanged()
                         }
                         hideKeyboard()
