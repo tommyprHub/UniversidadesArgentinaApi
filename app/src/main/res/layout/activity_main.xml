@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
-    android:background="@drawable/Bandera_Argentina">
+    android:background="@color/azulArg">
 
     <androidx.appcompat.widget.SearchView
         android:id="@+id/svUni"
@@ -29,6 +29,7 @@
         app:layout_constraintTop_toBottomOf="@id/svUni"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@color/azulArg"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,4 +6,5 @@
     <color name="gradientStart">#FFFFFFFF</color>
     <color name="gradientEnd">#858585</color>
     <color name="grisClaro">#CCCCCC</color>
+    <color name="azulArg">#70A7D8</color>
 </resources>

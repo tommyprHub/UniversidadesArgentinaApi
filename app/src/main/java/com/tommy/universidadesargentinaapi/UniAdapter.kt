@@ -1,10 +1,12 @@
 package com.tommy.universidadesargentinaapi
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
 class UniAdapter(
+
     private val universidades:List<Universidad>,
     private val onItemClick: (Universidad) -> Unit
 ):RecyclerView.Adapter<UniViewHolder>() {
@@ -16,6 +18,10 @@ class UniAdapter(
             val position = viewHolder.adapterPosition
             if (position != RecyclerView.NO_POSITION) {
                 onItemClick(universidades[position])
+
+                val intent = Intent(it.context, DatosUniversidad::class.java)
+                intent.putExtra("universidad", universidades[position])
+                it.context.startActivity(intent)
             }
         }
 

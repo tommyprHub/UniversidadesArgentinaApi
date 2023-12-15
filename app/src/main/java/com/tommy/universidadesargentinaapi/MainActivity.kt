@@ -23,6 +23,7 @@ class MainActivity : AppCompatActivity(), androidx.appcompat.widget.SearchView.O
     private lateinit var adapter: UniAdapter
     private var infoUniversidades = mutableListOf<Universidad>()
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -53,6 +54,7 @@ class MainActivity : AppCompatActivity(), androidx.appcompat.widget.SearchView.O
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
+
     private fun setGradientBackground() {
         val rootView: View = binding.root
 
@@ -106,8 +108,6 @@ class MainActivity : AppCompatActivity(), androidx.appcompat.widget.SearchView.O
         }
         return true
     }
-
-
     override fun onQueryTextChange(newText: String?): Boolean {
         return true
     }
