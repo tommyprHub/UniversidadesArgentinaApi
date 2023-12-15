@@ -24,10 +24,12 @@ class MainActivity : AppCompatActivity(), androidx.appcompat.widget.SearchView.O
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setGradientBackground()
+
         binding.svUni.setOnQueryTextListener(this)
         initRecyclerView()
 
@@ -95,26 +97,15 @@ class MainActivity : AppCompatActivity(), androidx.appcompat.widget.SearchView.O
 
     private fun loadAllUniversities() {
         CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val response = getRetrofit().create(APIService::class.java)
-                    .getAllUniversities("Argentina").execute()
+            val response = getRetrofit().create(APIService::class.java)
+                .getAllUniversities("Argentina").execute()
 
-                runOnUiThread {
-                    if (response.isSuccessful) {
-                        val universities = response.body()
-                        universities?.let {
-                            infoUniversidades.clear()
-                            infoUniversidades.addAll(it)
-                            adapter.notifyDataSetChanged()
-                        }
-                    } else {
-                        showError()
-                    }
-                }
-
-            } catch (e: Exception) {
-                runOnUiThread {
-                    showError()
+            runOnUiThread {
+                val universities = response.body()
+                universities?.let {
+                    infoUniversidades.clear()
+                    infoUniversidades.addAll(it)
+                    adapter.notifyDataSetChanged()
                 }
             }
         }

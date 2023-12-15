@@ -11,10 +11,8 @@ class UniViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     @SuppressLint("SetTextI18n")
     fun bind(universidad: Universidad) {
 
-        val dominioText = if (universidad.domains.isNullOrEmpty()) "N/A" else formatList(universidad.domains)
-
         binding.txUni.text = "${universidad.name}\n" +
-                "Dominios: $dominioText"
+                "Estado: ${universidad.stateProvince}"
     }
 
     private fun formatList(list: List<String>): String {

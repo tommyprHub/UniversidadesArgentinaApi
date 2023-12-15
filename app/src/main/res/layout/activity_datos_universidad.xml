@@ -107,6 +107,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:drawableTop="@drawable/baseline_keyboard_backspace_24"
+        android:layout_margin="10dp"
         android:drawablePadding="8dp"/>
 
 
