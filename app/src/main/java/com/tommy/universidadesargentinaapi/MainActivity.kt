@@ -9,7 +9,6 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.tommy.universidadesargentinaapi.databinding.ActivityMainBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -31,6 +30,9 @@ class MainActivity : AppCompatActivity(), androidx.appcompat.widget.SearchView.O
         setGradientBackground()
         binding.svUni.setOnQueryTextListener(this)
         initRecyclerView()
+
+        // cargar todas las universidades
+        loadAllUniversities()
     }
 
     private fun initRecyclerView() {
@@ -41,11 +43,6 @@ class MainActivity : AppCompatActivity(), androidx.appcompat.widget.SearchView.O
         }
         binding.rvUni.layoutManager = LinearLayoutManager(this)
         binding.rvUni.adapter = adapter
-
-        //intentando que se vean todas las universidades junto con la barra de busqueda
-        val recyclerView = findViewById<RecyclerView>(R.id.rvUni)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = adapter
     }
 
     private fun getRetrofit():Retrofit{
@@ -70,11 +67,11 @@ class MainActivity : AppCompatActivity(), androidx.appcompat.widget.SearchView.O
 
     private fun searchByName(query: String) {
         CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = getRetrofit().create(APIService::class.java)
+                    .getUniByName("Argentina", query).execute()
 
-            try{
-                val response = getRetrofit().create(APIService::class.java).getUniByName("Argentina", query).execute()
-
-                runOnUiThread{
+                runOnUiThread {
                     if (response.isSuccessful) {
                         val universities = response.body()
                         universities?.let {
@@ -88,13 +85,41 @@ class MainActivity : AppCompatActivity(), androidx.appcompat.widget.SearchView.O
                     }
                 }
 
-            }catch (e: Exception){
+            } catch (e: Exception) {
                 runOnUiThread {
                     showError()
                 }
             }
         }
     }
+
+    private fun loadAllUniversities() {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = getRetrofit().create(APIService::class.java)
+                    .getAllUniversities("Argentina").execute()
+
+                runOnUiThread {
+                    if (response.isSuccessful) {
+                        val universities = response.body()
+                        universities?.let {
+                            infoUniversidades.clear()
+                            infoUniversidades.addAll(it)
+                            adapter.notifyDataSetChanged()
+                        }
+                    } else {
+                        showError()
+                    }
+                }
+
+            } catch (e: Exception) {
+                runOnUiThread {
+                    showError()
+                }
+            }
+        }
+    }
+
     private fun hideKeyboard() {
         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(binding.viewRoot.windowToken, 0)

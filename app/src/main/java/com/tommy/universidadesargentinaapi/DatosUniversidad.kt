@@ -1,8 +1,10 @@
 package com.tommy.universidadesargentinaapi
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Button
 import android.widget.TextView
 
 class DatosUniversidad : AppCompatActivity() {
@@ -21,6 +23,16 @@ class DatosUniversidad : AppCompatActivity() {
             findViewById<TextView>(R.id.txtWebPages).text = "Páginas Web: $webPagesText"
             val dominiosText = if (it.domains.isNullOrEmpty()) "N/A" else it.domains.joinToString(", ")
             findViewById<TextView>(R.id.txtDomains).text = "Dominios: $dominiosText"
+        }
+
+        val botonRegresar: Button = findViewById(R.id.botonVolver)
+
+        botonRegresar.setOnClickListener {
+            val intent = Intent(this@DatosUniversidad , MainActivity::class.java)
+
+            startActivity(intent)
+
+            finish()
         }
     }
 }
