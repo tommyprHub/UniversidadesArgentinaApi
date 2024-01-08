@@ -24,7 +24,8 @@ class MainActivity : AppCompatActivity(), androidx.appcompat.widget.SearchView.O
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(R.style.AppTheme)
+        Thread.sleep(1500)
+        setTheme(androidx.appcompat.R.style.Theme_AppCompat)
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
