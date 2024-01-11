@@ -1,8 +1,8 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <gradient
-        android:startColor="@android:color/white"
-        android:endColor="@color/grisClaro" />
+        android:startColor="@color/grisClaro"
+        android:endColor="@android:color/darker_gray" />
     <stroke
-        android:color="@android:color/darker_gray"
+        android:color="@android:color/black"
         android:width="1dp" />
 </shape>
