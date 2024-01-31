@@ -48,6 +48,11 @@
         android:hint="Confirmar Contraseña"
         android:layout_marginTop="20dp"
         android:inputType="textPassword" />
+    <CheckBox
+        android:id="@+id/showPasswordCheckBoxReg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ver contraseña" />
 
     <Button
         android:id="@+id/btnGuardar"

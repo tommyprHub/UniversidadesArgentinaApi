@@ -6,10 +6,13 @@ import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
 import android.widget.Button
 import android.widget.CheckBox
-import android.widget.CompoundButton
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import androidx.room.Room
+import kotlinx.coroutines.launch
 
 
 
@@ -20,41 +23,59 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
 
         //variables de los componentes visuales
+        val usernameEditText = findViewById<EditText>(R.id.usernameEditText)
         val passwordEditText = findViewById<EditText>(R.id.passwordEditText)
         val showPasswordCheckBox = findViewById<CheckBox>(R.id.showPasswordCheckBox)
+        val loginButton = findViewById<Button>(R.id.loginButton)
+        val registerTextView = findViewById<TextView>(R.id.registerTextView)
 
-        //evento al marcar o desmarcar el checkbox
-        showPasswordCheckBox.setOnCheckedChangeListener { buttonView: CompoundButton?, isChecked: Boolean ->
-            // Si el CheckBox está marcado, mostrar la contraseña
+        val db = Room.databaseBuilder(applicationContext, DBPrueba::class.java, "dbPruebas").build()
+
+
+
+        // ---------------- EVENTO PARA QUE SE MUESTRE LA CONTRASEÑA CHECKBOX ---------------
+        showPasswordCheckBox.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
-                // se ve la contraseña
-                passwordEditText.transformationMethod =
-                    HideReturnsTransformationMethod.getInstance()
+                passwordEditText.transformationMethod = HideReturnsTransformationMethod.getInstance()
             } else {
-                // no se ve
                 passwordEditText.transformationMethod = PasswordTransformationMethod.getInstance()
             }
         }
 
+
+
         //------------- ABRIR FORMULARIO DE REGISTRO ------------------
-        val registerTextView = findViewById<TextView>(R.id.registerTextView)
 
         registerTextView.setOnClickListener {
-            // intent que iniciará la pantalla de registro
-            val intent = Intent(this, RegistroActivity::class.java)
-            // inicio
-            startActivity(intent)
+            startActivity(Intent(this, RegistroActivity::class.java))
         }
 
-        //------------- ABRIR FORMULARIO DE OPCIONES ------------------
-        val loginButton = findViewById<Button>(R.id.loginButton)
 
-        //IMPORTANTE -> añadir lo de la BD aquí (comprobación)
+
+        //------------- ABRIR FORMULARIO DE OPCIONES CUANDO EL USUARIO Y LA CONTRASEÑA COINCIDAN CON LAS QUE HAY EN LA BASE DE DATOS ------------------
         loginButton.setOnClickListener {
-            // intent que iniciará la pantalla de registro
-            val intent = Intent(this, OpcionesActivity::class.java)
-            // inicio
-            startActivity(intent)
+            val nombre = usernameEditText.text.toString()
+            val contrasenia = passwordEditText.text.toString()
+
+            if (nombre.isNotEmpty() && contrasenia.isNotEmpty()) {
+                lifecycleScope.launch {
+                    val usuario = db.daoUsuario().buscarUsuario(nombre, contrasenia)
+                    if (usuario != null) {
+                        // Usuario encontrado, iniciar actividad de opciones
+                        val intent = Intent(this@LoginActivity, OpcionesActivity::class.java)
+                        intent.putExtra("nombreUsuario",nombre)
+                        startActivity(intent)
+                    } else {
+                        // Usuario no encontrado, mostrar mensaje de error
+                        runOnUiThread {
+                            Toast.makeText(applicationContext, "Usuario o contraseña incorrectos", Toast.LENGTH_LONG).show()
+                        }
+                    }
+                }
+            } else {
+                Toast.makeText(applicationContext, "Por favor, ingrese usuario y contraseña", Toast.LENGTH_LONG).show()
+            }
         }
+
     }
 }

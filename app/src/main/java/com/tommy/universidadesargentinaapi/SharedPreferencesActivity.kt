@@ -5,67 +5,62 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
-
+import android.widget.Toast
 class SharedPreferencesActivity : AppCompatActivity() {
 
-    //numero que será incrementado y guardado como shared preferences
-    var numero = 0;
-    // Declaración de la variable para almacenar el animal escogido
+    var numero = 0
     var animalEscogido: String = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_shared_preferences)
 
-        //------------- SHARED PREFERENCES ------------------
+        // Obtener el nombre de usuario actual
+        val nombreDeUsuario = intent.getStringExtra("nombreUsuario") ?: "UsuarioPorDefecto"
 
-        //botón para incrementar el número
+        // Cojo las shared preferences del usuario que ha iniciado sesión
+        val pref = applicationContext.getSharedPreferences("datos_$nombreDeUsuario", MODE_PRIVATE)
+
+        // variables por defecto
+        numero = pref.getInt("contador", 0)
+        animalEscogido = pref.getString("animal", "") ?: ""
+
+        // Boton +1
         val pressHereButton = findViewById<Button>(R.id.pressHereButton)
-
-        // Evento del botón "Pulsa aquí"
         pressHereButton.setOnClickListener {
             incrementarNumero()
         }
 
-        //CARGAR LOS DATOS
-        val pref = applicationContext.getSharedPreferences(
-            "datos",0)
+        // botón para guardar las preferencias
+        val buttonGuardarPrefs = findViewById<Button>(R.id.buttonGuardarPrefs)
+        buttonGuardarPrefs.setOnClickListener {
+            guardaPrefs(nombreDeUsuario) // Pasar el nombre de usuario a guardaPrefs
+        }
 
-        numero = pref.getInt("contador",numero)
-        animalEscogido = pref.getString("animal", animalEscogido).toString()
-
-        //variables de los componentes donde deben de aparecer los valores
         var numTextView = findViewById<TextView>(R.id.numTextView)
         val animalFavTextView = findViewById<TextView>(R.id.animalFavTextView)
         numTextView.text = numero.toString()
-        animalFavTextView.text = animalEscogido.toString()
-
-
-        //botón para guardar preferencias
-        val buttonGuardarPrefs = findViewById<Button>(R.id.buttonGuardarPrefs)
-        buttonGuardarPrefs.setOnClickListener {
-            guardaPrefs()
-        }
+        animalFavTextView.text = animalEscogido
     }
 
-    // Método para incrementar la variable 'numero'
     private fun incrementarNumero() {
         numero += 1
-        var numTextView = findViewById<TextView>(R.id.numTextView)
+        val numTextView = findViewById<TextView>(R.id.numTextView)
         numTextView.text = numero.toString()
     }
-    //Método para guardar preferencias
-    private fun guardaPrefs(){
-        //shared preferences
-        val pref = applicationContext.getSharedPreferences(
-            "datos",0)
 
+    //Método para guardar preferencias dependiendo del usuario
+    private fun guardaPrefs(nombreUsuario: String) {
+        val pref = applicationContext.getSharedPreferences("datos_$nombreUsuario", MODE_PRIVATE)
         val editor = pref.edit()
-        val favoriteAnimalEditText = findViewById<EditText>(R.id.favoriteAnimalEditText) //debo coger el texto del animal favorito
+
+        val favoriteAnimalEditText = findViewById<EditText>(R.id.favoriteAnimalEditText)
         animalEscogido = favoriteAnimalEditText.text.toString()
 
         editor.putInt("contador", numero)
-        editor.putString("animal", animalEscogido)
+        editor.putString("animal", "Último animal favorito -> $animalEscogido")
 
         editor.apply()
+        Toast.makeText(applicationContext, "Preferencias guardadas para $nombreUsuario", Toast.LENGTH_LONG).show()
     }
 }
