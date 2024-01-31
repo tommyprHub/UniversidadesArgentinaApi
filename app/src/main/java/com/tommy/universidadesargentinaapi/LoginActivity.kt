@@ -41,16 +41,31 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
-        // id del textView para abrir el form registro
+
+
+        //------------- ABRIR FORMULARIO DE REGISTRO ------------------
         val registerTextView = findViewById<TextView>(R.id.registerTextView)
 
-        // evento para abrir la pantalla de registro
         registerTextView.setOnClickListener {
             // intent que iniciará la pantalla de registro
             val intent = Intent(this, RegistroActivity::class.java)
             // inicio
             startActivity(intent)
         }
+
+        //------------- ABRIR FORMULARIO DE OBCIONES ------------------
+        val loginButton = findViewById<Button>(R.id.loginButton)
+
+        //IMPORTANTE -> añadir lo de la BD aquí (comprobación)
+        loginButton.setOnClickListener {
+            // intent que iniciará la pantalla de registro
+            val intent = Intent(this, OpcionesActivity::class.java)
+            // inicio
+            startActivity(intent)
+        }
+
+
+        //------------- SHARED PREFERENCES ------------------
 
         //botón para incrementar el número
         val pressHereButton = findViewById<Button>(R.id.pressHereButton)
@@ -59,7 +74,6 @@ class LoginActivity : AppCompatActivity() {
         pressHereButton.setOnClickListener {
             incrementarNumero()
         }
-
 
         //CARGAR LOS DATOS
         val pref = applicationContext.getSharedPreferences(
