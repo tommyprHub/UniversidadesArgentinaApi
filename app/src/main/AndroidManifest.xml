@@ -57,7 +57,7 @@
         <activity
             android:name=".LoginActivity"
             android:exported="true"
-            android:theme="@style/SplashTheme">
+            android:theme="@style/SplashThemeDark">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
