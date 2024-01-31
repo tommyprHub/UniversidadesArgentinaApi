@@ -72,8 +72,8 @@
         android:id="@+id/pressHereButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
         android:layout_gravity="center_horizontal"
+        android:layout_marginTop="4dp"
         android:text="Pulsa aquí" />
 
     <TextView
@@ -96,4 +96,12 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="18dp"
         android:gravity="center_horizontal" />
+
+    <Button
+        android:id="@+id/buttonGuardarPrefs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="15dp"
+        android:text="Guardar preferencias" />
 </LinearLayout>
