@@ -60,11 +60,6 @@ class LoginActivity : AppCompatActivity() {
             incrementarNumero()
         }
 
-        //botón para guardar preferencias
-        val buttonGuardarPrefs = findViewById<Button>(R.id.buttonGuardarPrefs)
-        buttonGuardarPrefs.setOnClickListener {
-            guardaPrefs()
-        }
 
         //CARGAR LOS DATOS
         val pref = applicationContext.getSharedPreferences(
@@ -72,11 +67,26 @@ class LoginActivity : AppCompatActivity() {
 
         numero = pref.getInt("contador",numero)
         animalEscogido = pref.getString("animal", animalEscogido).toString()
+
+        //variables de los componentes donde deben de aparecer los valores
+        var numTextView = findViewById<TextView>(R.id.numTextView)
+        val animalFavTextView = findViewById<TextView>(R.id.animalFavTextView)
+        numTextView.text = numero.toString()
+        animalFavTextView.text = animalEscogido.toString()
+
+
+        //botón para guardar preferencias
+        val buttonGuardarPrefs = findViewById<Button>(R.id.buttonGuardarPrefs)
+        buttonGuardarPrefs.setOnClickListener {
+            guardaPrefs()
+        }
     }
 
     // Método para incrementar la variable 'numero'
     private fun incrementarNumero() {
         numero += 1
+        var numTextView = findViewById<TextView>(R.id.numTextView)
+        numTextView.text = numero.toString()
     }
     //Método para guardar preferencias
     private fun guardaPrefs(){
