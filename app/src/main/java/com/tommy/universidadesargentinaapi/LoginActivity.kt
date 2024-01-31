@@ -14,11 +14,6 @@ import androidx.appcompat.app.AppCompatActivity
 
 
 class LoginActivity : AppCompatActivity() {
-
-    //numero que será incrementado y guardado como shared preferences
-    var numero = 0;
-    // Declaración de la variable para almacenar el animal escogido
-    var animalEscogido: String = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(androidx.appcompat.R.style.Theme_AppCompat)
         super.onCreate(savedInstanceState)
@@ -41,8 +36,6 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
-
-
         //------------- ABRIR FORMULARIO DE REGISTRO ------------------
         val registerTextView = findViewById<TextView>(R.id.registerTextView)
 
@@ -53,7 +46,7 @@ class LoginActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        //------------- ABRIR FORMULARIO DE OBCIONES ------------------
+        //------------- ABRIR FORMULARIO DE OPCIONES ------------------
         val loginButton = findViewById<Button>(R.id.loginButton)
 
         //IMPORTANTE -> añadir lo de la BD aquí (comprobación)
@@ -63,58 +56,5 @@ class LoginActivity : AppCompatActivity() {
             // inicio
             startActivity(intent)
         }
-
-
-        //------------- SHARED PREFERENCES ------------------
-
-        //botón para incrementar el número
-        val pressHereButton = findViewById<Button>(R.id.pressHereButton)
-
-        // Evento del botón "Pulsa aquí"
-        pressHereButton.setOnClickListener {
-            incrementarNumero()
-        }
-
-        //CARGAR LOS DATOS
-        val pref = applicationContext.getSharedPreferences(
-            "datos",0)
-
-        numero = pref.getInt("contador",numero)
-        animalEscogido = pref.getString("animal", animalEscogido).toString()
-
-        //variables de los componentes donde deben de aparecer los valores
-        var numTextView = findViewById<TextView>(R.id.numTextView)
-        val animalFavTextView = findViewById<TextView>(R.id.animalFavTextView)
-        numTextView.text = numero.toString()
-        animalFavTextView.text = animalEscogido.toString()
-
-
-        //botón para guardar preferencias
-        val buttonGuardarPrefs = findViewById<Button>(R.id.buttonGuardarPrefs)
-        buttonGuardarPrefs.setOnClickListener {
-            guardaPrefs()
-        }
-    }
-
-    // Método para incrementar la variable 'numero'
-    private fun incrementarNumero() {
-        numero += 1
-        var numTextView = findViewById<TextView>(R.id.numTextView)
-        numTextView.text = numero.toString()
-    }
-    //Método para guardar preferencias
-    private fun guardaPrefs(){
-        //shared preferences
-        val pref = applicationContext.getSharedPreferences(
-            "datos",0)
-
-        val editor = pref.edit()
-        val favoriteAnimalEditText = findViewById<EditText>(R.id.favoriteAnimalEditText) //debo coger el texto del animal favorito
-        animalEscogido = favoriteAnimalEditText.text.toString()
-
-        editor.putInt("contador", numero)
-        editor.putString("animal", animalEscogido)
-
-        editor.apply()
     }
 }

@@ -33,4 +33,12 @@
         android:layout_marginTop="16dp"
         android:text="Ver el mapa" />
 
+    <!-- Botón para ver las shared preferences -->
+    <Button
+        android:id="@+id/btnSharedPreferences"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Shared preferences" />
+
 </LinearLayout>
