@@ -1,15 +1,24 @@
 package com.tommy.universidadesargentinaapi
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-
+import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.tommy.universidadesargentinaapi.APIService
+import com.tommy.universidadesargentinaapi.GoogleGeocodingService
+import com.tommy.universidadesargentinaapi.R
 import com.tommy.universidadesargentinaapi.databinding.ActivityMapsBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -28,21 +37,50 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         mapFragment.getMapAsync(this)
     }
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+        loadAllUniversities()
+    }
 
-        // Add a marker in Sydney and move the camera
-        val sydney = LatLng(-34.0, 151.0)
-        mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+    private fun loadAllUniversities() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val retrofitUniversities = Retrofit.Builder()
+                .baseUrl("http://universities.hipolabs.com/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+
+            val universitiesService = retrofitUniversities.create(APIService::class.java)
+            val universitiesResponse = universitiesService.getAllUniversities("Argentina").execute()
+
+            if (universitiesResponse.isSuccessful) {
+                universitiesResponse.body()?.let { universities ->
+                    universities.forEach { university ->
+                        val detailedAddress = "${university.name}, Argentina"
+                        val retrofitGeocoding = Retrofit.Builder()
+                            .baseUrl("https://maps.googleapis.com/")
+                            .addConverterFactory(GsonConverterFactory.create())
+                            .build()
+
+                        val geocodingService = retrofitGeocoding.create(GoogleGeocodingService::class.java)
+                        val geocodingResponse = geocodingService.getCoordinates(detailedAddress, "AIzaSyDEhe3TKPMbvp6NFldu0FdyLEJ5tlg5tM8").execute()
+
+                        if (geocodingResponse.isSuccessful) {
+                            geocodingResponse.body()?.results?.firstOrNull()?.let { result ->
+                                val location = result.geometry.location
+                                Log.d("MapsActivity", "Ubicación encontrada: ${location.lat}, ${location.lng}")
+                                withContext(Dispatchers.Main) {
+                                    val latLng = LatLng(location.lat, location.lng)
+                                    mMap.addMarker(MarkerOptions().position(latLng).title(university.name))
+                                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 1f))
+                                }
+                            } ?: Log.d("MapsActivity", "No se encontraron resultados para ${university.name}")
+                        }  else {
+                            val errorBody = geocodingResponse.errorBody()?.string()
+                            Log.d("MapsActivity", "Error en Geocoding API para ${university.name}: $errorBody")
+                        }
+                    }
+                }
+            }
+        }
     }
 }
